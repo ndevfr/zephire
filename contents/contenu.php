@@ -1,12 +1,13 @@
 <?php
 session_set_cookie_params(0);
+session_name('AuthZephire');
 session_start();
 
-if(is_dir("contents")){
-	$dir = "contents/";
-}else{
-	$dir = "../contents/";
-}
+foreach ($_REQUEST as $key => $val) 
+{
+	$val = preg_replace("/[^_A-Za-z0-9-\.&=]/i",'', $val);
+	$_REQUEST[$key] = $val;
+}  
 
 include($dir . "include.php");
 
