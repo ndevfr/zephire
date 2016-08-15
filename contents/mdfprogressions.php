@@ -265,9 +265,9 @@ if ((estprof())) {
             );
             foreach ($lstcodes as $uncode) {
                 if ($uncode !== "") {
-                    $icone = "../contents/images/Icones/$nompico/$uncode.png";
+                    $icone = $dir . "images/Icones/$nompico/$uncode.png";
                 } else {
-                    $icone = "../contents/images/Icones/$nompico/NE.png";
+                    $icone = $dir . "images/Icones/$nompico/NE.png";
                 }
                 if (file_exists($icone)) {
                     echo "<td><img alt='$uncode' src='$icone' /></td>";

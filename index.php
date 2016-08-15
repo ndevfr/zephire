@@ -24,6 +24,16 @@ $dbpass = "********";
 // Prefixe utilise pour la base de donnees
 $prefix = "********_";
 
-include ("contents/contenu.php");
+/**************************************************/
+/**************** Début du contenu ****************/
+/**************************************************/
+
+if(is_dir("contents")){
+	$dir = "contents/";
+}else{
+	$dir = "../contents/";
+}
+
+include ($dir . "contenu.php");
 
 ?>

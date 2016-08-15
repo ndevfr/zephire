@@ -2,17 +2,23 @@
 session_set_cookie_params(0);
 session_start();
 
-include("../contents/include.php");
-
-include("../contents/page.php");
-
-if (($inclpage !== "exportcsv.php") && ($inclpage !== "backup.php")) {
-    include("../contents/header.php");
+if(is_dir("contents")){
+	$dir = "contents/";
+}else{
+	$dir = "../contents/";
 }
 
-include("../contents/" . $inclpage);
+include($dir . "include.php");
+
+include($dir . "page.php");
 
 if (($inclpage !== "exportcsv.php") && ($inclpage !== "backup.php")) {
-    include("../contents/footer.php");
+    include($dir . "header.php");
+}
+
+include($dir . $inclpage);
+
+if (($inclpage !== "exportcsv.php") && ($inclpage !== "backup.php")) {
+    include($dir . "footer.php");
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-require_once("../contents/ext/MobileDetect/Mobile_Detect.php");
+require_once($dir . "ext/MobileDetect/Mobile_Detect.php");
 
 if (function_exists("date_default_timezone_set"))
     date_default_timezone_set("Europe/Paris");
@@ -325,9 +325,9 @@ function donnedernote($tab, $autoeval)
 // Fonction transformant les codes en images
 function enimage($code, $classe, $mode)
 {
-    global $prefix, $link;
+    global $dir, $prefix, $link;
     if ($mode == 1) {
-        $image = "../contents/images/Ceintures/$code.png";
+        $image = $dir . "images/Ceintures/$code.png";
         if (file_exists($image)) {
             return "<img alt='$code' src='$image' />";
         } else {
@@ -338,9 +338,9 @@ function enimage($code, $classe, $mode)
         $r       = mysqli_fetch_array($result);
         $packact = $r['icones'];
         if ($code !== "") {
-            $image = "../contents/images/Icones/$packact/$code.png";
+            $image = $dir . "images/Icones/$packact/$code.png";
         } else {
-            $image = "../contents/images/Icones/$packact/NE.png";
+            $image = $dir . "images/Icones/$packact/NE.png";
         }
         if (file_exists($image)) {
             return "<img alt='$code' src='$image' />";
@@ -1117,7 +1117,7 @@ function gensql()
         $sql = 'SHOW CREATE TABLE ' . $table;
         $res = $db->query($sql) or die(mysqli_error($db) . $sql);
         if ($res) {
-            $backup_file = '../contents/backup/' . $table . '.sql.gz';
+            $backup_file = $dir . 'backup/' . $table . '.sql.gz';
             $fp          = gzopen($backup_file, 'w');
             $tableau     = mysqli_fetch_array($res);
             $tableau[1] .= ";\n";
@@ -1141,11 +1141,12 @@ function gensql()
     return $insertions;
 }
 // Fonction listant les sous-dossiers
-function listedossiers($dir)
+function listedossiers($skdir)
 {
-    $dir      = "../contents/" . $dir;
+	global $dir;
+    $skdir      = $dir . $skdir;
     $dir_list = array();
-    if ($objs = glob($dir . "/*")) {
+    if ($objs = glob($skdir . "/*")) {
         foreach ($objs as $obj) {
             if (is_dir($obj)) {
                 $dir_list[] = $obj;
