@@ -1,0 +1,27 @@
++--------------------------+
+| Bienvenue dans ZEPHIRE ! |
++--------------------------+
+
+QUE FAUT-IL POUR QUE ZEPHIRE FONCTIONNE ?
+-----------------------------------------
+Pour faire fonctionner Zéphire, il vous faut :
+
+ * Un serveur Web (Apache, Cheerokee, lightHttpd, etc.)
+ * PHP 5.2 avec ces différents modules :
+   * Mysql
+ * Un serveur de base de données MySQL
+ 
+ Ou :
+ 
+ * Utiliser la version disponible sur http://zephire.xyz/
+
+
+INSTALLATION
+------------
+Copier tous les fichiers sur votre serveur Web.
+
+Editer le fichier config.php avec vos informations personnelles.
+
+Lancer le script install.php pour initialiser la base de données.
+
+Supprimer (ou renommer) le script install.php.

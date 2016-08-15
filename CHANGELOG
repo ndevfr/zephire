@@ -1,0 +1,105 @@
+ZEPHIRE 5.00 - 2016-08-15
+===========================================================
+* Diverses optimisations du code.
+* Intégration au site zephire.xyz pour ouvrir l'accès à d'autres établissements.
+* Transfert des évaluations dans la table prefix_evaluations.
+* Possibilité de définir des repères de progressivités pour les ceintures ajoutée.
+* Ajout des pages "Sélection des compétences" et "Modifier Barèmes" pour modifier les progressions.
+* Inversion des colonnes Points et Barèmes.
+* Optimisation de l'affichage sur mobile (menu latéral, options désactivées).
+* Gestion de plusieurs disciplines au sein de l'application.
+* Hashage des mots de passe Professeurs pour plus de sécurité.
+* Page "Mon compte" pour permettre au professeurs de changer leur mot de passe.
+* Amélioration de la page "Bilan classe".
+
+ZEPHIRE 4.00 - 2014-06-13
+===========================================================
+* Progressions et options gérées pour chaque classe.
+* Option "Sans notes" lorsque les barèmes sont renseignées à 0.
+* Date et trimestre ajoutés dans la progression pour une meilleure vue sur la page "Moyennes Classe".
+* Possibilité de choisir un Id personnalisé pour les classes.
+* Nouvelle façon de gérer les icones : il suffit de les ajouter dans un sous-dossier de "images/icones".
+* Ajout de nouveaux packs d'icones.
+* Possibilité de choisir le nombre d'évaluations (jusqu'à 10) pour chaque chapitre.
+* Possibilité de choisir l'activation de l'autoévaluation pour chaque chapitre.
+* Possibilité de choisir l'évaluation avec ceintures de couleur pour chaque chapitre.
+* Encodage UTF-8 de la base de données.
+* Optimisation du code et correction de bugs divers.
+
+ZEPHIRE 3.00 - 2012-07-17
+===========================================================
+* Changement de l'interface graphique.
+* Remplacement de l'évaluation 1 par une autoévaluation de l'élève.
+* Amélioration de la visibilité sur la page du bilan classe.
+* Liste des identifiants imprimés sous forme d'étiquettes.
+* Ajout d'une page permettant la réinitialisation des classes et élèves.
+* Correction d'un bug sur la page de moyennes classe.
+* Ajout d'un nouveau pack d'icones.
+
+ZEPHIRE 2.12 - 2012-08-25
+===========================================================
+* Ajout du support de détection d'une nouvelle version.
+* Ajout d'un nouveau pack d'icones.
+
+ZEPHIRE 2.1 - 2012-08-23
+===========================================================
+* Amélioration de l'ergonomie des pages d'options.
+* Amélioration de l'optimisation des pages pour l'impression.
+* Correction de bugs.
+
+ZEPHIRE 2.0 - 2012-08-22
+===========================================================
+* Changement de nom pour l'application. MEPC devient ZEPHIRE.
+
+MEPC 1.2.1 - 2012-08-21
+===========================================================
+* Ajout de la page "Progressions" pour afficher les progressions suivies dans les différents niveaux.
+
+MEPC 1.2 - 2012-07-20
+===========================================================
+* Correction des bugs relatifs à la page Moyennes.
+* Passage du codage par défaut "RR", "R", "V", "VV" à "NA", "ECA", "PA", "A".
+* Création du script "update.php" pour mettre à jour la base de données sans réinstaller.
+* Ajout de la possibilité de personnaliser les visuels, libellés et description des niveaux d'acquis.
+* Ajout de la fonction "Noté(e) absent(e)" sur la page d'évaluation et prise en compte dans l'application.
+* Actualisation du script d'installation pour la prise en compte de ces nouvelles options.
+* Correction de bugs signalés par les utilisateurs.
+
+MEPC 1.1.3 - 2012-02-12
+===========================================================
+* Correction du bug du nouveau Select multiple dans la partie évaluation.
+* Nouvelle interface de connection plus estethique.
+* Nouveau menu, accessible depuis toute page et plus estethique.
+* Suppression du bouton "Retour" devenu inutile avec le nouveau menu.
+* Sauvegarde possible de la BDD dans un fichier .sql téléchargeable.
+* Remplacement du texte de l'explication "n'est pas du tout acquise" en "n'est pas encore acquise".
+
+MEPC 1.1.2 - 2012-02-11
+===========================================================
+* Ajout d'un Select pour donner la même valeur à toutes les compétences d'une évaluation.
+* Ajout des indications [S], [S+] et [S-] pour signaler l'appartenance des compétences au socle commun.
+* Ajout de la page moyennes de classe.
+
+MEPC 1.1.1 - 2012-01-02
+===========================================================
+* Ajout de la Licence GNU-GPL v2.
+
+MEPC 1.1 - 2011-11-07
+===========================================================
+* Ajout du Changelog.
+* Optimisation et correction du code.
+
+MEPC 1.0.1 - 2011-10-18
+===========================================================
+* Ajout d'un script d'installation automatisée.
+* Correction de premiers bugs repérés.
+
+MEPC 1.0.1 - 2011-09-14
+===========================================================
+* Ajout de l'importation/exportation des données en .csv.
+* Ajout de l'accès aux évaluations pour les élèves.
+* Ajout des comptes "professeur" pour autoriser l'accès à une équipe pédagogique complète.
+
+MEPC 1.0 - 2011-08-31
+===========================================================
+* Première version fonctionnelle (mais non optimisée) de l'application web avec ses premiers défauts.
