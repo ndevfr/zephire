@@ -72,6 +72,7 @@ a:focus > .sf-sub-indicator,a:hover > .sf-sub-indicator,a:active > .sf-sub-indic
 .cbp-spmenu ul li a{color:#FFFFFF;}
 .cbp-spmenu ul li.active a{color:#5a4509;}
 .menu-trigger{display:none;}
+}
 /* ECRAN MOBILE OU TABLETTE */
 @media screen and (max-device-width:480px){
 h1,h2,h3,h4,h5,h6 {font-weight:normal;line-height:1.5em;}
@@ -95,6 +96,8 @@ body{font-size:11px;padding:0;margin:0;}
 #navigation{display:none;}
 #panel{display:none;}
 #explication{display:none;}
+.menu-trigger{display:none;}
+#cpb-menu{display:none;}
 table{border:solid 1px;border-collapse:collapse;}
 td{border-bottom:solid 1px;text-align:center;padding:0;margin:0;padding-left:2px;padding-right:2px;padding-top:5px;padding-bottom:5px;}
 .noprint{display:none;}

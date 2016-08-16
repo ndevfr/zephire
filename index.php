@@ -28,9 +28,9 @@ $prefix = "********_";
 /**************** Début du contenu ****************/
 /**************************************************/
 
-if(is_dir("contents")){
+if (is_dir("contents")) {
 	$dir = "contents/";
-}else{
+} else {
 	$dir = "../contents/";
 }
 
