@@ -2,17 +2,19 @@
 echo "<h1>Modifier les niveaux</h1>";
 if ( estadmin() ) {
 	if ( ( !empty( $_POST[ 'submit' ] ) ) ) {
-		for ( $i = 1; $i <= sizeof( $_POST[ 'nom' ] ); $i++ ) {
-			$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
-			$id   = formatid( $_POST[ 'id' ][ $i ] );
-			$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
-			$sql  = "UPDATE " . $prefix . "niveaux SET nom = '$nom' WHERE id = '$exid'";
-			$link->query( $sql );
-			if ( $exid !== $id ) {
-				updidniveau( $exid, $id );
+		if ( !empty( $_POST[ 'exid' ] ) ) {
+			for ( $i = 1; $i <= sizeof( $_POST[ 'nom' ] ); $i++ ) {
+				$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
+				$id   = formatid( $_POST[ 'id' ][ $i ] );
+				$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
+				$sql  = "UPDATE " . $prefix . "niveaux SET nom = '$nom' WHERE id = '$exid'";
+				$link->query( $sql );
+				if ( $exid !== $id ) {
+					updidniveau( $exid, $id );
+				}
 			}
 		}
-		if ( !empty( $_POST[ 'nomnew' ] ) ) {
+		if ( !empty( $_POST[ 'idnew' ] ) ) {
 			$id  = formatid( $_POST[ 'idnew' ] );
 			$nom = $link->real_escape_string( $_POST[ 'nomnew' ] );
 			$sql = "INSERT INTO " . $prefix . "niveaux (id, nom) VALUES ('$id', '$nom')";
@@ -30,7 +32,7 @@ if ( estadmin() ) {
 		}
 		$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 		$fic        = fopen( "$fichiercsv", 'rb' );
-		for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+		while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {			
 			$symbole = substr( $ligne[ 0 ], 0, 1 );
 			if ( $symbole !== "#" ) {
 				$id  = preg_replace( "[^a-zA-Z0-9\ ]", "", $ligne[ 0 ] );
@@ -42,7 +44,7 @@ if ( estadmin() ) {
 		fclose( $fic );
 	}
 	echo "<form action='mdfniveaux.php' method='POST'><table class='data'><thead><tr><th>Id</th><th>Nom</th></tr></thead><tbody>";
-	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id DESC" );
+	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id ASC" );
 	$i      = 1;
 	while ( $r = mysqli_fetch_array( $result ) ) {
 		$nom = $r[ 'nom' ];
@@ -58,7 +60,7 @@ if ( estadmin() ) {
 	echo "<td><input type='text' class='inputcell' value='' name='nomnew' placeholder='...' /></td>";
 	echo "</tr></tbody></table>";
 	echo "<p class='noprint'><input type='submit' value='Valider' name='submit' /></p></form>";
-	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id DESC" );
+	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id ASC" );
 	echo "<form action='mdfniveaux.php' name='formsuppr' method='POST' class='noprint'><p>Supprimer un niveau : <select name='supprniv'><option value='' selected>...</option>";
 	while ( $r = mysqli_fetch_array( $result ) ) {
 		$idcl  = $r[ 'id' ];

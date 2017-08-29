@@ -11,17 +11,19 @@ if ( estprof() ) {
 	echo "</p></div>";
 	if ( !empty( $niveau ) && !empty( $discipline ) ) {
 		if ( ( !empty( $_POST[ 'submit' ] ) ) ) {
-			for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
-				$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
-				$lib  = formatid( $link->real_escape_string( $_POST[ 'id' ][ $i ] ) );
-				$id   = $niveau . "." . $discipline . "." . $lib;
-				$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
-				$cat  = $link->real_escape_string( $_POST[ 'ordre' ][ $i ] );
-				$soc  = $link->real_escape_string( $_POST[ 'socle' ][ $i ] );
-				$sql  = "UPDATE " . $prefix . "competences SET nom = '$nom', cat = '$cat', socle = '$soc', niveau = '$niveau', discipline = '$discipline', libelle = '$lib' WHERE id = '$exid'";
-				$link->query( $sql );
-				if ( $exid !== $id ) {
-					updidcompetence( $exid, $id );
+			if ( !empty( $_POST[ 'exid' ] ) ) {
+				for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
+					$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
+					$lib  = formatid( $link->real_escape_string( $_POST[ 'id' ][ $i ] ) );
+					$id   = $niveau . "." . $discipline . "." . $lib;
+					$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
+					$cat  = $link->real_escape_string( $_POST[ 'ordre' ][ $i ] );
+					$soc  = $link->real_escape_string( $_POST[ 'socle' ][ $i ] );
+					$sql  = "UPDATE " . $prefix . "competences SET nom = '$nom', cat = '$cat', socle = '$soc', niveau = '$niveau', discipline = '$discipline', libelle = '$lib' WHERE id = '$exid'";
+					$link->query( $sql );
+					if ( $exid !== $id ) {
+						updidcompetence( $exid, $id );
+					}
 				}
 			}
 			if ( !empty( $_POST[ 'idnew' ] ) ) {
@@ -45,7 +47,7 @@ if ( estprof() ) {
 			}
 			$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 			$fic        = fopen( "$fichiercsv", 'rb' );
-			for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+			while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {
 				$symbole = substr( $ligne[ 0 ], 0, 1 );
 				if ( $symbole !== "#" ) {
 					$cat = $link->real_escape_string( $ligne[ 0 ] );

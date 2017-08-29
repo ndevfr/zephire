@@ -2,22 +2,24 @@
 echo "<h1>Modifier les disciplines</h1>";
 if ( estadmin() ) {
 	if ( ( !empty( $_POST[ 'submit' ] ) ) ) {
-		for ( $i = 1; $i <= sizeof( $_POST[ 'nom' ] ); $i++ ) {
-			$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
-			$id   = formatid( $link->real_escape_string( $_POST[ 'id' ][ $i ] ) );
-			$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
-			if ( !empty( $_POST[ 'active' ][ $i ] ) ) {
-				$active = 1;
-			} else {
-				$active = 0;
-			}
-			$sql = "UPDATE " . $prefix . "disciplines SET nom = '$nom', active = '$active' WHERE id = '$exid'";
-			$link->query( $sql );
-			if ( $exid !== $id ) {
-				updidcdiscipline( $exid, $id );
+		if ( !empty( $_POST[ 'exid' ] ) ) {
+			for ( $i = 1; $i <= sizeof( $_POST[ 'nom' ] ); $i++ ) {
+				$exid = $link->real_escape_string( $_POST[ 'exid' ][ $i ] );
+				$id   = formatid( $link->real_escape_string( $_POST[ 'id' ][ $i ] ) );
+				$nom  = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
+				if ( !empty( $_POST[ 'active' ][ $i ] ) ) {
+					$active = 1;
+				} else {
+					$active = 0;
+				}
+				$sql = "UPDATE " . $prefix . "disciplines SET nom = '$nom', active = '$active' WHERE id = '$exid'";
+				$link->query( $sql );
+				if ( $exid !== $id ) {
+					updidcdiscipline( $exid, $id );
+				}
 			}
 		}
-		if ( !empty( $_POST[ 'nomnew' ] ) ) {
+		if ( !empty( $_POST[ 'idnew' ] ) ) {
 			$id  = formatid( $link->real_escape_string( $_POST[ 'idnew' ] ) );
 			$nom = $link->real_escape_string( $_POST[ 'nomnew' ] );
 			if ( !empty( $_POST[ 'activenew' ] ) ) {
@@ -40,7 +42,7 @@ if ( estadmin() ) {
 		}
 		$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 		$fic        = fopen( "$fichiercsv", 'rb' );
-		for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+		while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {			
 			$symbole = substr( $ligne[ 0 ], 0, 1 );
 			if ( $symbole !== "#" ) {
 				$id     = formatid( $link->real_escape_string( $ligne[ 0 ] ) );

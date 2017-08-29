@@ -99,8 +99,8 @@ if ( estprof() ) {
 				$val3evals = explode( "-", $lst3evals );
 				$dereval   = recupdereval( $val3evals );
 				if ( $modech == 2 ) {
-					$baremecomp = $barmch[ $idcompetence[ $j ] ];
-					$dereval    = donneacqui( $classe, $dereval, $baremecomp );
+					$baremecomp = $barmch[ $niveau.".".$discipline.".".$idcompetence[ $j ] ];
+					$dereval    = donneacqui( $classe, $discipline, $dereval, $baremecomp );
 				}
 				$recap[ $idcompetence[ $j ] ][ $dereval ]++;
 			}
@@ -152,7 +152,7 @@ if ( estprof() ) {
 			$absent      = $recupeval[ 1 ];
 			$nonnote     = $recupeval[ 2 ];
 			if ( $lesevals !== -1 ) {
-				$evals = explode( "-", $lesevals[ $competence ] );
+				$evals = explode( "-", $lesevals[ substr( $competence, strlen( $niveau ) + strlen( $discipline ) + 2 ) ] );
 				if ( sizeof( $evals ) < $mxevch ) {
 					for ( $k = sizeof( $evals ); $k < $mxevch; $k++ ) {
 						$evals[ $k ] = "";
@@ -160,7 +160,7 @@ if ( estprof() ) {
 				}
 				if ( $modech == 2 ) {
 					foreach ( $evals as $k => $v ) {
-						$evals[ $k ] = donneacqui( $classe, $v, $baremecomp );
+						$evals[ $k ] = donneacqui( $classe, $discipline, $v, $baremecomp );
 					}
 				}
 			} else {

@@ -11,28 +11,30 @@ if ( ( estprof() ) ) {
 		updideleve( $supprel, "" );
 	}
 	if ( !empty( $_POST[ 'submit' ] ) ) {
-		for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
-			$idel            = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
-			$nomel           = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
-			$prenomel        = $link->real_escape_string( $_POST[ 'prenom' ][ $i ] );
-			$sexeel          = $link->real_escape_string( $_POST[ 'sexe' ][ $i ] );
-			$datenaissanceel = $link->real_escape_string( $_POST[ 'datenaissance' ][ $i ] );
-			$regimeel        = $link->real_escape_string( $_POST[ 'regime' ][ $i ] );
-			$optionsel       = $link->real_escape_string( $_POST[ 'options' ][ $i ] );
-			$commentairesel  = $link->real_escape_string( $_POST[ 'commentaires' ][ $i ] );
-			$usernameel      = $link->real_escape_string( $_POST[ 'username' ][ $i ] );
-			if ( empty( $usernameel ) ) {
-				$usernameel = $link->real_escape_string( strtolower( substr( $prenomel, 0, 1 ) ) . strtolower( str_replace( " ", "_", $nomel ) ) );
-			}
-			$passwordel = $link->real_escape_string( $_POST[ 'password' ][ $i ] );
-			if ( empty( $passwordel ) ) {
-				for ( $p = 0; $p <= 3; $p++ ) {
-					$passwordel .= rand( 0, 9 );
+		if ( !empty( $_POST[ 'id' ] ) ) {
+			for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
+				$idel            = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
+				$nomel           = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
+				$prenomel        = $link->real_escape_string( $_POST[ 'prenom' ][ $i ] );
+				$sexeel          = $link->real_escape_string( $_POST[ 'sexe' ][ $i ] );
+				$datenaissanceel = $link->real_escape_string( $_POST[ 'datenaissance' ][ $i ] );
+				$regimeel        = $link->real_escape_string( $_POST[ 'regime' ][ $i ] );
+				$optionsel       = $link->real_escape_string( $_POST[ 'options' ][ $i ] );
+				$commentairesel  = $link->real_escape_string( $_POST[ 'commentaires' ][ $i ] );
+				$usernameel      = $link->real_escape_string( cleanstr( $_POST[ 'username' ][ $i ] ) );
+				if ( empty( $usernameel ) ) {
+					$usernameel = $link->real_escape_string( substr( cleanstr( $prenomel ), 0, 1 ) . cleanstr( $nomel ) );
 				}
+				$passwordel = $link->real_escape_string( $_POST[ 'password' ][ $i ] );
+				if ( empty( $passwordel ) ) {
+					for ( $p = 0; $p <= 3; $p++ ) {
+						$passwordel .= rand( 0, 9 );
+					}
+				}
+				$passwordel = $link->real_escape_string( encrypt( $passwordel ) );
+				$sql        = "UPDATE " . $prefix . "eleves SET nom = \"$nomel\", prenom = \"$prenomel\", sexe = \"$sexeel\", datenaissance = \"$datenaissanceel\", regime = \"$regimeel\", options = \"$optionsel\", commentaires = \"$commentairesel\", username = \"$usernameel\", password = \"$passwordel\" WHERE id = $idel";
+				$link->query( $sql );
 			}
-			$passwordel = $link->real_escape_string( encrypt( $passwordel ) );
-			$sql        = "UPDATE " . $prefix . "eleves SET nom = '$nomel', prenom = '$prenomel', sexe = '$sexeel', datenaissance = '$datenaissanceel', regime = '$regimeel', options = '$optionsel', commentaires = '$commentairesel', username = '$usernameel', password = '$passwordel' WHERE id = $idel";
-			$link->query( $sql );
 		}
 		if ( !empty( $_POST[ 'nomnew' ] ) ) {
 			$nomel           = $link->real_escape_string( $_POST[ 'nomnew' ] );
@@ -42,9 +44,9 @@ if ( ( estprof() ) ) {
 			$regimeel        = $link->real_escape_string( $_POST[ 'regimenew' ] );
 			$optionsel       = $link->real_escape_string( $_POST[ 'optionsnew' ] );
 			$commentairesel  = $link->real_escape_string( $_POST[ 'commentairesnew' ] );
-			$usernameel      = $link->real_escape_string( $_POST[ 'usernamenew' ] );
+			$usernameel      = $link->real_escape_string( cleanstr( $_POST[ 'usernamenew' ] ) );
 			if ( empty( $usernameel ) ) {
-				$usernameel = $link->real_escape_string( strtolower( substr( $prenomel, 0, 1 ) ) . strtolower( str_replace( " ", "_", $nomel ) ) );
+				$usernameel = $link->real_escape_string( substr( cleanstr( $prenomel ), 0, 1 ) . cleanstr( $nomel ) );
 			}
 			$passwordel = $link->real_escape_string( $_POST[ 'passwordnew' ] );
 			if ( empty( $passwordel ) ) {
@@ -53,7 +55,7 @@ if ( ( estprof() ) ) {
 				}
 			}
 			$passwordel = $link->real_escape_string( encrypt( $passwordel ) );
-			$sql        = "INSERT INTO " . $prefix . "eleves (nom, prenom, sexe, datenaissance, regime, options, commentaires, classe, username, password) VALUES ('$nomel', '$prenomel', '$sexeel', '$datenaissanceel', '$regimeel', '$optionsel', '$commentairesel', '$classe', '$usernameel', '$passwordel')";
+			$sql        = "INSERT INTO " . $prefix . "eleves (nom, prenom, sexe, datenaissance, regime, options, commentaires, classe, username, password) VALUES (\"$nomel\", \"$prenomel\", \"$sexeel\", \"$datenaissanceel\", \"$regimeel\", \"$optionsel\", \"$commentairesel\", \"$classe\", \"$usernameel\", \"$passwordel\")";
 			$link->query( $sql );
 		}
 	}
@@ -64,11 +66,11 @@ if ( ( estprof() ) ) {
 		}
 		$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 		$fic        = fopen( "$fichiercsv", 'rb' );
-		for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+		while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {			
 			$symbole = substr( $ligne[ 0 ], 0, 1 );
 			if ( $symbole !== "#" ) {
 				if ( empty( $ligne[ 7 ] ) ) {
-					$ligne[ 7 ] = $link->real_escape_string( strtolower( substr( $ligne[ 1 ], 0, 1 ) ) . strtolower( str_replace( " ", "_", $ligne[ 0 ] ) ) );
+					$ligne[ 7 ] = $link->real_escape_string( substr( cleanstr( $ligne[ 1 ] ), 0, 1 ) . cleanstr( $ligne[ 0 ] ) );
 				}
 				if ( empty( $ligne[ 8 ] ) ) {
 					for ( $p = 0; $p <= 3; $p++ ) {
@@ -82,9 +84,9 @@ if ( ( estprof() ) ) {
 				$ligne[ 4 ] = $link->real_escape_string( $ligne[ 4 ] );
 				$ligne[ 5 ] = $link->real_escape_string( $ligne[ 5 ] );
 				$ligne[ 6 ] = $link->real_escape_string( $ligne[ 6 ] );
-				$ligne[ 7 ] = $link->real_escape_string( $ligne[ 7 ] );
+				$ligne[ 7 ] = $link->real_escape_string( cleanstr( $ligne[ 7 ] ) );
 				$ligne[ 8 ] = $link->real_escape_string( encrypt( $ligne[ 8 ] ) );
-				$sql        = "INSERT INTO " . $prefix . "eleves (classe, nom, prenom, sexe, datenaissance, regime, options, commentaires, username, password) VALUES (" . $classe . ", '" . $ligne[ 0 ] . "', '" . $ligne[ 1 ] . "', '" . $ligne[ 2 ] . "', '" . $ligne[ 3 ] . "', '" . $ligne[ 4 ] . "', '" . $ligne[ 5 ] . "', '" . $ligne[ 6 ] . "', '" . $ligne[ 7 ] . "', '" . $ligne[ 8 ] . "')";
+				echo $sql        = "INSERT INTO " . $prefix . "eleves (classe, nom, prenom, sexe, datenaissance, regime, options, commentaires, username, password) VALUES (\"" . $classe . "\", \"" . $ligne[ 0 ] . "\", \"" . $ligne[ 1 ] . "\", \"" . $ligne[ 2 ] . "\", \"" . $ligne[ 3 ] . "\", \"" . $ligne[ 4 ] . "\", \"" . $ligne[ 5 ] . "\", \"" . $ligne[ 6 ] . "\", \"" . $ligne[ 7 ] . "\", \"" . $ligne[ 8 ] . "\")";
 				$link->query( $sql );
 			}
 		}
@@ -107,7 +109,7 @@ if ( ( estprof() ) ) {
 			$commentairesel  = $r[ 'commentaires' ];
 			$usernameel      = $r[ 'username' ];
 			$passwordel      = decrypt( $r[ 'password' ] );
-			echo "<tr><td style='width:70px;'>Nom :</td><td style='width:140px;'><input type='hidden' name='id[$k]' value='$idel' /><input tabindex=" . $k . "1 type='text' class='inputcell' name='nom[$k]' value='$nomel' placeholder='Nom' /></td><td style='width:95px;'>Pr&eacute;nom :</td><td style='width:150px;'><input tabindex=" . $k . "2 type='text' class='inputcell' name='prenom[$k]' value='$prenomel' placeholder='Prénom' /><td rowspan='4' style='width:200px;'><textarea tabindex=" . $k . "8 placeholder='Options' class='inputcell' rows='6' name='options[$k]'>" . $optionsel . "</textarea></td><td rowspan='4'><textarea tabindex=" . $k . "9 placeholder='Commentaires' class='inputcell' rows='6' name='commentaires[$k]'>$commentairesel</textarea></td></tr>";
+			echo "<tr><td style='width:70px;'>Nom :</td><td style='width:140px;'><input type='hidden' name='id[$k]' value='$idel' /><input tabindex=" . $k . "1 type='text' class='inputcell' name='nom[$k]' value=\"$nomel\" placeholder='Nom' /></td><td style='width:95px;'>Pr&eacute;nom :</td><td style='width:150px;'><input tabindex=" . $k . "2 type='text' class='inputcell' name='prenom[$k]' value=\"$prenomel\" placeholder='Prénom' /><td rowspan='4' style='width:200px;'><textarea tabindex=" . $k . "8 placeholder='Options' class='inputcell' rows='6' name='options[$k]'>" . $optionsel . "</textarea></td><td rowspan='4'><textarea tabindex=" . $k . "9 placeholder='Commentaires' class='inputcell' rows='6' name='commentaires[$k]'>$commentairesel</textarea></td></tr>";
 			echo "<tr><td>Naissance :</td><td><input tabindex=" . $k . "3 type='text' class='inputcell' name='datenaissance[$k]' value='$datenaissanceel' placeholder='../../....' /></td><td>Sexe :</td><td>";
 			echo "<select tabindex=" . $k . "4 name='sexe[$k]' style='width:100%;'>";
 			echo "<option value='M' ";

@@ -7,34 +7,36 @@ if ( estadmin() ) {
 		$link->query( $sql );
 	}
 	if ( !empty( $_POST[ 'submit' ] ) ) {
-		for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
-			$idpr     = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
-			$nompr    = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
-			$prenompr = $link->real_escape_string( $_POST[ 'prenom' ][ $i ] );
-			if ( !empty( $_POST[ 'classespr' ][ $i ] ) ) {
-				$classespr = $link->real_escape_string( implode( ",", $_POST[ 'classespr' ][ $i ] ) );
-			} else {
-				$classespr = "";
+		if ( !empty( $_POST[ 'id' ] ) ) {
+			for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
+				$idpr     = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
+				$nompr    = $link->real_escape_string( $_POST[ 'nom' ][ $i ] );
+				$prenompr = $link->real_escape_string( $_POST[ 'prenom' ][ $i ] );
+				if ( !empty( $_POST[ 'classespr' ][ $i ] ) ) {
+					$classespr = $link->real_escape_string( implode( ",", $_POST[ 'classespr' ][ $i ] ) );
+				} else {
+					$classespr = "";
+				}
+				if ( !empty( $_POST[ 'disciplinespr' ][ $i ] ) ) {
+					$disciplinespr = $link->real_escape_string( implode( ",", $_POST[ 'disciplinespr' ][ $i ] ) );
+				} else {
+					$disciplinespr = "";
+				}
+				$usernamepr = $link->real_escape_string( $_POST[ 'username' ][ $i ] );
+				$passwordpr = $_POST[ 'password' ][ $i ];
+				if ( !empty( $_POST[ 'admin' ][ $i ] ) ) {
+					$adminpr = $link->real_escape_string( $_POST[ 'admin' ][ $i ] );
+				} else {
+					$adminpr = 0;
+				}
+				if ( !empty( $passwordpr ) ) {
+					$passwordpr = md5( $link->real_escape_string( $passwordpr ) );
+					$sql        = "UPDATE " . $prefix . "profs SET nom = '$nompr', prenom = '$prenompr', classes = '$classespr', disciplines = '$disciplinespr', username = '$usernamepr', password = '$passwordpr', admin = $adminpr WHERE id = $idpr";
+				} else {
+					$sql = "UPDATE " . $prefix . "profs SET nom = '$nompr', prenom = '$prenompr', classes = '$classespr', disciplines = '$disciplinespr', username = '$usernamepr', admin = $adminpr WHERE id = $idpr";
+				}
+				$link->query( $sql );
 			}
-			if ( !empty( $_POST[ 'disciplinespr' ][ $i ] ) ) {
-				$disciplinespr = $link->real_escape_string( implode( ",", $_POST[ 'disciplinespr' ][ $i ] ) );
-			} else {
-				$disciplinespr = "";
-			}
-			$usernamepr = $link->real_escape_string( $_POST[ 'username' ][ $i ] );
-			$passwordpr = $_POST[ 'password' ][ $i ];
-			if ( !empty( $_POST[ 'admin' ][ $i ] ) ) {
-				$adminpr = $link->real_escape_string( $_POST[ 'admin' ][ $i ] );
-			} else {
-				$adminpr = 0;
-			}
-			if ( !empty( $passwordpr ) ) {
-				$passwordpr = md5( $link->real_escape_string( $passwordpr ) );
-				$sql        = "UPDATE " . $prefix . "profs SET nom = '$nompr', prenom = '$prenompr', classes = '$classespr', disciplines = '$disciplinespr', username = '$usernamepr', password = '$passwordpr', admin = $adminpr WHERE id = $idpr";
-			} else {
-				$sql = "UPDATE " . $prefix . "profs SET nom = '$nompr', prenom = '$prenompr', classes = '$classespr', disciplines = '$disciplinespr', username = '$usernamepr', admin = $adminpr WHERE id = $idpr";
-			}
-			$link->query( $sql );
 		}
 		if ( !empty( $_POST[ 'nomnew' ] ) ) {
 			$nompr    = $link->real_escape_string( $_POST[ 'nomnew' ] );
@@ -67,7 +69,7 @@ if ( estadmin() ) {
 		$link->query( $sql );
 		$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 		$fic        = fopen( "$fichiercsv", 'rb' );
-		for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+		while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {			
 			$symbole = substr( $ligne[ 0 ], 0, 1 );
 			if ( $symbole !== "#" ) {
 				if ( empty( $ligne[ 4 ] ) ) {

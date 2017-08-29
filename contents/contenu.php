@@ -10,11 +10,11 @@ foreach ( $_REQUEST as $key => $val ) {
 }
 include( $dir . "include.php" );
 include( $dir . "page.php" );
-if ( ( $inclpage !== "exportcsv.php" ) && ( $inclpage !== "backup.php" ) ) {
+if ( ( $inclpage !== "exportcsv.php" ) && ( $inclpage !== "backup.php" ) && ( $inclpage !== "api.php" ) ) {
 	include( $dir . "header.php" );
 }
 include( $dir . $inclpage );
-if ( ( $inclpage !== "exportcsv.php" ) && ( $inclpage !== "backup.php" ) ) {
+if ( ( $inclpage !== "exportcsv.php" ) && ( $inclpage !== "backup.php" ) && ( $inclpage !== "api.php" ) ) {
 	include( $dir . "footer.php" );
 }
 ?>

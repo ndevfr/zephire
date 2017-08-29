@@ -1,3 +1,3 @@
 <?php
-$versapp = "5.00";
+$versapp = "6.00";
 ?>

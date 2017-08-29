@@ -62,6 +62,16 @@ function linkapp()
 	}
 	return "http://" . $_SERVER[ 'HTTP_HOST' ] . $linksite;
 }
+// Fonction nettoyant une chaine de caractere
+function cleanstr($str)
+{
+	$str = str_replace(array("'"," ",'"'),"_",$str);
+	$str = htmlentities($str, ENT_NOQUOTES, 'utf-8');
+	$str = preg_replace('#&([A-za-z])(?:uml|circ|tilde|acute|grave|cedil|ring);#', '\1', $str);
+	$str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str);
+	$str = preg_replace('#&[^;]+;#', '', $str);
+	return strtolower($str);
+}
 // Fonction ne retournant que des caracteres alphanumeriques
 function formatid( $str )
 {
@@ -171,136 +181,97 @@ function disciplinesprof()
 		return array();
 	}
 }
-$codespdef = array(
-	'',
-	'NA',
-	'ECA',
-	'PA',
-	'A' 
-);
-$ceintures = array(
-	'',
-	'BLA',
-	'JAU',
-	'ORA',
-	'VER',
-	'BLE',
-	'MAR',
-	'NOI' 
-);
+$codespdef = array('', 'NA', 'ECA', 'PA', 'A');
+$ceintures = array('', 'BLA', 'JAU', 'ORA', 'VER', 'BLE', 'MAR', 'NOI');
 // Fonction retournant le libelle correspondant au niveau d'acquisition sur une competence
-function donnelib( $id, $classe, $discipline, $mode )
+function donnelib( $classe, $discipline, $mode )
 {
 	global $prefix, $link;
 	if ( $mode == 1 ) {
-		$libs = array(
-			"" => "...",
-			"BLA" => "Blanche",
-			"JAU" => "Jaune",
-			"ORA" => "Orange",
-			"VER" => "Verte",
-			"BLE" => "Bleue",
-			"MAR" => "Marron",
-			"NOI" => "Noire" 
-		);
-		return $libs[ $id ];
+		$libs = array("" => "...", "BLA" => "Blanche", "JAU" => "Jaune", "ORA" => "Orange", "VER" => "Verte", "BLE" => "Bleue", "MAR" => "Marron", "NOI" => "Noire");
+		return $libs;
 	} elseif ( $mode == 0 ) {
 		$result = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
 		if ( $result->num_rows == 0 ) {
-			$leslibs = array(
-				'NA',
-				'ECA',
-				'PA',
-				'A' 
-			);
+			$leslibs = array('NA', 'ECA', 'PA', 'A');
 		} else {
-			$r       = mysqli_fetch_array( $result );
-			$lstlibs = $r[ 'libelles' ];
-			$leslibs = explode( "|", $lstlibs );
+			$r        = mysqli_fetch_array( $result );
+			$leslibs = array('NA', 'ECA', 'PA', 'A');
+			$bddlibs = explode( "|", $r['libelles'] );
+			for ($i=0;$i<4;$i++){
+				if(!empty($bddlibs[$i])){
+					$leslibs[$i] = $bddlibs[$i];
+				}
+			}
 		}
-		$libs = array(
-			"" => "...",
-			"NA" => $leslibs[ 0 ],
-			"ECA" => $leslibs[ 1 ],
-			"PA" => $leslibs[ 2 ],
-			"A" => $leslibs[ 3 ],
-			"ATT" => "?",
-			"OUI" => "OUI",
-			"NON" => "NON" 
-		);
-		return $libs[ $id ];
+		return array("" => "...", "NA" => $leslibs[ 0 ], "ECA" => $leslibs[ 1 ], "PA" => $leslibs[ 2 ], "A" => $leslibs[ 3 ], "ATT" => "?", "OUI" => "OUI", "NON" => "NON");
 	}
 }
 // Fonction retournant la description correspondant au niveau d'acquisition sur une competence
-function donnedesc( $id, $classe, $discipline )
+function donnedesc( $classe, $discipline )
 {
 	global $prefix, $link;
 	$result = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
 	if ( $result->num_rows == 0 ) {
-		$lesdescs = array(
-			"La comp&eacute;tence n'est pas encore acquise.",
-			"La comp&eacute;tence est en cours d'acquisition.",
-			"La comp&eacute;tence est presque acquise.",
-			"La comp&eacute;tence est parfaitement acquise." 
-		);
+		$lesdescs = array("La comp&eacute;tence n'est pas encore acquise.", "La comp&eacute;tence est en cours d'acquisition.", "La comp&eacute;tence est presque acquise.", "La comp&eacute;tence est parfaitement acquise.");
 	} else {
 		$r        = mysqli_fetch_array( $result );
-		$lstdescs = $r[ 'descriptions' ];
-		$lesdescs = explode( "|", $lstdescs );
+		$lesdescs = array("La comp&eacute;tence n'est pas encore acquise.", "La comp&eacute;tence est en cours d'acquisition.", "La comp&eacute;tence est presque acquise.", "La comp&eacute;tence est parfaitement acquise.");
+		$bdddescs = explode( "|", $r['descriptions'] );
+		for ($i=0;$i<4;$i++){
+			if(!empty($bdddescs[$i])){
+				$lesdescs[$i] = $bdddescs[$i];
+			}
+		}
 	}
-	$descs = array(
-		"" => "",
-		"NA" => $lesdescs[ 0 ],
-		"ECA" => $lesdescs[ 1 ],
-		"PA" => $lesdescs[ 2 ],
-		"A" => $lesdescs[ 3 ] 
-	);
-	return $descs[ $id ];
+	return array("" => "", "NA" => $lesdescs[ 0 ], "ECA" => $lesdescs[ 1 ], "PA" => $lesdescs[ 2 ], "A" => $lesdescs[ 3 ]);
 }
-// Fonction retournant le pourcentage de points acquis sur une competence
-function donnenota( $id, $classe, $discipline )
+// Fonction retournant tous les pourcentages de points d'une classe dans une discipline
+function donnenota( $classe, $discipline )
 {
 	global $prefix, $link;
 	$result = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
 	if ( $result->num_rows == 0 ) {
-		$lesnotes = array(
-			'0',
-			'30',
-			'70',
-			'100' 
-		);
+		$lesnotes = array('0', '30', '70', '100');
 	} else {
 		$r        = mysqli_fetch_array( $result );
-		$lstnotes = $r[ 'notations' ];
-		$lesnotes = explode( "|", $lstnotes );
+		$lesnotes = array('0', '30', '70', '100');
+		$bddnotes = explode( "|", $r['notations'] );
+		for ($i=0;$i<4;$i++){
+			if(!empty($bddnotes[$i])){
+				$lesnotes[$i] = $bddnotes[$i];
+			}
+		}
 	}
-	$notes = array(
-		"" => 0,
-		"NA" => $lesnotes[ 0 ],
-		"ECA" => $lesnotes[ 1 ],
-		"PA" => $lesnotes[ 2 ],
-		"A" => $lesnotes[ 3 ] 
-	);
-	return $notes[ $id ];
+	return array("" => 0, "NA" => $lesnotes[ 0 ], "ECA" => $lesnotes[ 1 ], "PA" => $lesnotes[ 2 ], "A" => $lesnotes[ 3 ] );
 }
 // Fonction retournant un état d'acquisition en fonction des points donnés sur une competence
-function donneacqui( $classe, $note, $max )
+function donneacqui( $classe, $discipline, $note, $max )
 {
 	global $prefix, $link;
-	$result   = $link->query( "SELECT * FROM " . $prefix . "classes WHERE id = '$classe'" );
-	$r        = mysqli_fetch_array( $result );
-	$lstnotes = $r[ 'notations' ];
-	$lesnotes = explode( "|", $lstnotes );
-	if ( ( $note == "" ) OR ( $note == "ABS" ) OR ( $note == "NN" ) ) {
+	$result = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
+	if ( $result->num_rows == 0 ) {
+		$lesnotes = array('0', '30', '70', '100');
+	} else {
+		$r        = mysqli_fetch_array( $result );
+		$lesnotes = array('0', '30', '70', '100');
+		$bddnotes = explode( "|", $r['notations'] );
+		for ($i=0;$i<4;$i++){
+			if(!empty($bddnotes[$i])){
+				$lesnotes[$i] = $bddnotes[$i];
+			}
+		}
+	}
+	if ( ( $note == "" ) or ( $note == "ABS" ) or ( $note == "NN" ) ) {
 		return "";
 	}
 	if ( $note < $lesnotes[ 1 ] * $max / 100 ) {
 		return "NA";
 	} else if ( $note < $lesnotes[ 2 ] * $max / 100 ) {
-		return "ECA";
-	} else if ( $note < $lesnotes[ 3 ] * $max / 100 ) {
-		return "PA";
-	} else {
+			return "ECA";
+		} else if ( $note < $lesnotes[ 3 ] * $max / 100 ) {
+			return "PA";
+		} else {
 		return "A";
 	}
 }
@@ -314,7 +285,8 @@ function donnenote( $tab, $classe, $discipline, $autoeval )
 	}
 	for ( $n = sizeof( $tab ) - 1; $n >= $nmin; $n-- ) {
 		if ( $tab[ $n ] <> '' ) {
-			return donnenota( $tab[ $n ], $classe, $discipline );
+			$notes = donnenota( $classe, $discipline );
+			return $notes[$tab[ $n ]];
 		}
 	}
 	return 0;
@@ -343,12 +315,20 @@ function enimage( $code, $classe, $discipline, $mode )
 		if ( file_exists( $image ) ) {
 			return "<img alt='$code' src='$image' />";
 		} else {
-			return donnelib( $code, $classe, $discipline, $code );
+			$libs = donnelib( $classe, $discipline, $mode );
+			return $libs[ $code ];
 		}
 	} else {
 		$result  = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
-		$r       = mysqli_fetch_array( $result );
-		$packact = $r[ 'icones' ];
+		if ( $result->num_rows == 0 ) {
+			$packact = "Origico";
+		} else {
+			$r       = mysqli_fetch_array( $result );
+			$packact = $r[ 'icones' ];
+			if( $packact == "" ) {
+				$packact = "Origico";
+			}
+		}
 		if ( $code !== "" ) {
 			$image = $dir . "images/Icones/$packact/$code.png";
 		} else {
@@ -357,20 +337,15 @@ function enimage( $code, $classe, $discipline, $mode )
 		if ( file_exists( $image ) ) {
 			return "<img alt='$code' src='$image' />";
 		} else {
-			return donnelib( $code, $classe, $discipline, $code );
+			$libs = donnelib( $classe, $discipline, $mode );
+			return $libs[ $code ];
 		}
 	}
 }
 // Fonction testant la validation d'une competence
 function estvalide( $tab, $autoeval )
 {
-	$ptscomp = array(
-		"" => 0,
-		"NA" => 0,
-		"ECA" => 1,
-		"PA" => 2,
-		"A" => 3 
-	);
+	$ptscomp = array("" => 0, "NA" => 0, "ECA" => 1, "PA" => 2, "A" => 3);
 	if ( $autoeval ) {
 		unset( $tab[ 0 ] );
 		$tab = array_values( $tab );
@@ -403,7 +378,7 @@ function estvalide( $tab, $autoeval )
 	return "OUI";
 	} else {
 	return "NON";
-	}	
+	}
 	} else {
 	return "ATT";
 	}*/
@@ -437,10 +412,10 @@ function infoch( $ch )
 			$barcomp[] = 0;
 		}
 	} else if ( sizeof( $arrcomp ) < sizeof( $barcomp ) ) {
-		for ( $i = sizeof( $barcomp ) - 1; $i >= sizeof( $arrcomp ); $i-- ) {
-			unset( $barcomp[ $i ] );
+			for ( $i = sizeof( $barcomp ) - 1; $i >= sizeof( $arrcomp ); $i-- ) {
+				unset( $barcomp[ $i ] );
+			}
 		}
-	}
 	$bareme      = array_combine( $arrcomp, $barcomp );
 	$lstcomp     = implode( ",", $arrcomp );
 	$competences = "'" . str_replace( ",", "','", $lstcomp ) . "'";
@@ -453,7 +428,7 @@ function infoch( $ch )
 		'autoevaluation' => $r[ 'autoevaluation' ],
 		'mode' => $r[ 'mode' ],
 		'trimestre' => $r[ 'trimestre' ],
-		'date' => $r[ 'date' ] 
+		'date' => $r[ 'date' ]
 	);
 }
 // Fonction associant les id de competences au chapitre et a la discipline
@@ -475,10 +450,10 @@ function corrigebaremes( $competences, $baremes )
 			$barcomp[] = 0;
 		}
 	} else if ( sizeof( $arrcomp ) < sizeof( $barcomp ) ) {
-		for ( $i = sizeof( $barcomp ) - 1; $i >= sizeof( $arrcomp ); $i-- ) {
-			unset( $barcomp[ $i ] );
+			for ( $i = sizeof( $barcomp ) - 1; $i >= sizeof( $arrcomp ); $i-- ) {
+				unset( $barcomp[ $i ] );
+			}
 		}
-	}
 	return implode( ",", $barcomp );
 }
 // Fonction recuperant les informations relatives à un eleve donne
@@ -525,7 +500,7 @@ function recupevalch( $chapitre, $eleve )
 		$lesevals,
 		$absent,
 		$nonnote,
-		$bilan 
+		$bilan
 	);
 }
 // Fonction déterminant les couleurs de ceinture valides pour une compétence
@@ -559,13 +534,7 @@ function bilanauto( $eleve, $chapitre )
 {
 	$recupeval = recupevalch( $chapitre, $eleve );
 	$tab       = $recupeval[ 0 ];
-	$notes     = array(
-		"" => 0,
-		"NA" => 0,
-		"ECA" => 0.3,
-		"PA" => 0.7,
-		"A" => 1 
-	);
+	$notes     = array("" => 0, "NA" => 0, "ECA" => 0.3, "PA" => 0.7, "A" => 1);
 	$count     = 0;
 	$notebilan = 0;
 	if ( $tab !== -1 ) {
@@ -695,7 +664,7 @@ function mediane( $tab )
 {
 	global $prefix;
 	foreach ( $tab as $k => $v ) {
-		if ( ( $v == "ABS" ) OR ( $v == "NN" ) OR ( $v == "NE" ) OR ( $v == "" ) ) {
+		if ( ( $v == "ABS" ) or ( $v == "NN" ) or ( $v == "NE" ) or ( $v == "" ) ) {
 			unset( $tab[ $k ] );
 		}
 	}
@@ -739,7 +708,7 @@ function effectif( $tab )
 {
 	global $prefix;
 	foreach ( $tab as $k => $v ) {
-		if ( ( $v == "ABS" ) OR ( $v == "NE" ) OR ( $v == "" ) ) {
+		if ( ( $v == "ABS" ) or ( $v == "NE" ) or ( $v == "" ) ) {
 			unset( $tab[ $k ] );
 		}
 	}
@@ -771,7 +740,7 @@ function selectniveau( $lien )
 	global $prefix, $link, $niveau;
 	echo "<label style='display: inline-block'>Niveau : <select name='selclasse' tabindex='1' onchange='location.href=$lien'>";
 	echo "<option value=''>...</option>";
-	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id DESC" );
+	$result = $link->query( "SELECT * FROM " . $prefix . "niveaux ORDER BY id ASC" );
 	if ( $result->num_rows == 1 ) {
 		$r         = mysqli_fetch_array( $result );
 		$idniveau  = $r[ 'id' ];
@@ -799,10 +768,10 @@ function selectclasse( $lien, $bool = false )
 	$classesprof = "'" . str_replace( ",", "','", $lstclprof ) . "'";
 	echo "<label style='display: inline-block'>Classe : <select name='selclasse' tabindex='1' onchange='location.href=$lien'>";
 	echo "<option value=''>...</option>";
-	if ( ( estadmin() ) OR ( $bool ) ) {
-		$result = $link->query( "SELECT * FROM " . $prefix . "classes ORDER BY niveau DESC, id ASC" );
+	if ( ( estadmin() ) or ( $bool ) ) {
+		$result = $link->query( "SELECT * FROM " . $prefix . "classes ORDER BY id ASC, nom ASC" );
 	} else {
-		$result = $link->query( "SELECT * FROM " . $prefix . "classes WHERE id in ($classesprof) ORDER BY niveau DESC, id ASC" );
+		$result = $link->query( "SELECT * FROM " . $prefix . "classes WHERE active = 1 and id in ($classesprof) ORDER BY id ASC, nom ASC" );
 	}
 	if ( $result->num_rows == 1 ) {
 		$r         = mysqli_fetch_array( $result );
@@ -831,7 +800,7 @@ function selectdiscipline( $lien, $bool = false )
 	$disciplinesprof = "'" . str_replace( ",", "','", $lstdsprof ) . "'";
 	echo "<label style='display: inline-block'>Discipline : <select name='seldiscipline' tabindex='2' onchange='location.href=$lien'>";
 	echo "<option value=''>...</option>";
-	if ( ( !estprof() ) OR ( estadmin() ) ) {
+	if ( ( !estprof() ) or ( estadmin() ) ) {
 		$result = $link->query( "SELECT * FROM " . $prefix . "disciplines WHERE active = 1 ORDER BY nom ASC" );
 	} else {
 		$result = $link->query( "SELECT * FROM " . $prefix . "disciplines WHERE id in ($disciplinesprof) AND active = 1 ORDER BY nom ASC" );
@@ -908,19 +877,25 @@ function selecteleve( $lien )
 	}
 	echo "</select></label> ";
 	if ( !empty( $classe ) ) {
-		if ( !empty( $eleve ) ) {
+		if ( $eleve !== -1 ) {
 			$indexidel = array_search( $eleve, $tabideleves );
 			if ( $indexidel - 1 >= 0 ) {
 				$indexpvel = $tabideleves[ $indexidel - 1 ];
 			}
-			$indexnxel = $tabideleves[ $indexidel + 1 ];
+			if ( $indexidel < sizeof( $tabideleves ) - 1 ) {
+				$indexnxel = $tabideleves[ $indexidel + 1 ];
+			}
 			if ( !empty( $indexpvel ) ) {
 				$indexpvlk = str_replace( "\" + this.value", "$indexpvel\"", $lien );
 				echo " <input type='button' value='<' onclick='location.href=$indexpvlk' /> ";
+			} else {
+				echo " <input type='button' value='<' disabled /> ";
 			}
 			if ( !empty( $indexnxel ) ) {
 				$indexnxlk = str_replace( "\" + this.value", "$indexnxel\"", $lien );
 				echo "<input type='button' value='>' onclick='location.href=$indexnxlk' /> ";
+			} else {
+				echo " <input type='button' value='>' disabled /> ";
 			}
 		}
 	}

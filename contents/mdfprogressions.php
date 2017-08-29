@@ -16,22 +16,24 @@ if ( estprof() ) {
 	echo "</p></div>";
 	if ( !empty( $classe ) && !empty( $discipline ) ) {
 		if ( ( !empty( $_POST[ 'subChap' ] ) ) ) {
-			for ( $i = 1; $i <= sizeof( $_POST[ 'id' ] ); $i++ ) {
-				$numero         = formatid( $_POST[ 'numero' ][ $i ] );
-				$exid           = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
-				$id             = $link->real_escape_string( $classe . "." . $discipline . "." . $numero );
-				$nom            = $link->real_escape_string( $_POST[ 'titre' ][ $i ] );
-				$competences    = $link->real_escape_string( $_POST[ 'competences' ][ $i ] );
-				$baremes        = corrigebaremes( $competences, $link->real_escape_string( $_POST[ 'baremes' ][ $i ] ) );
-				$nbevaluations  = $link->real_escape_string( $_POST[ 'nbevaluations' ][ $i ] );
-				$autoevaluation = $link->real_escape_string( $_POST[ 'autoevaluation' ][ $i ] );
-				$mode           = $link->real_escape_string( $_POST[ 'mode' ][ $i ] );
-				$trimestre      = $link->real_escape_string( $_POST[ 'trimestre' ][ $i ] );
-				$date           = $link->real_escape_string( envdate( $_POST[ 'date' ][ $i ] ) );
-				$sql            = "UPDATE " . $prefix . "chapitres SET nom = '$nom', competences = '$competences', baremes = '$baremes', trimestre = $trimestre, date = '$date', nbevaluations = '$nbevaluations', autoevaluation = '$autoevaluation', mode = $mode, classe = '$classe', discipline = '$discipline', libelle = '$numero' WHERE id = '$exid'";
-				$link->query( $sql );
-				if ( $exid !== $id ) {
-					updidchapitre( $exid, $id );
+			if ( ( !empty( $_POST[ "id" ] ) ) ) {
+				for ( $i = 1; $i <= sizeof( $_POST[ "id" ] ); $i++ ) {
+					$numero         = formatid( $_POST[ 'numero' ][ $i ] );
+					$exid           = $link->real_escape_string( $_POST[ 'id' ][ $i ] );
+					$id             = $link->real_escape_string( $classe . "." . $discipline . "." . $numero );
+					$nom            = $link->real_escape_string( $_POST[ 'titre' ][ $i ] );
+					$competences    = $link->real_escape_string( $_POST[ 'competences' ][ $i ] );
+					$baremes        = corrigebaremes( $competences, $link->real_escape_string( $_POST[ 'baremes' ][ $i ] ) );
+					$nbevaluations  = $link->real_escape_string( $_POST[ 'nbevaluations' ][ $i ] );
+					$autoevaluation = $link->real_escape_string( $_POST[ 'autoevaluation' ][ $i ] );
+					$mode           = $link->real_escape_string( $_POST[ 'mode' ][ $i ] );
+					$trimestre      = $link->real_escape_string( $_POST[ 'trimestre' ][ $i ] );
+					$date           = $link->real_escape_string( envdate( $_POST[ 'date' ][ $i ] ) );
+					$sql            = "UPDATE " . $prefix . "chapitres SET nom = '$nom', competences = '$competences', baremes = '$baremes', trimestre = $trimestre, date = '$date', nbevaluations = '$nbevaluations', autoevaluation = '$autoevaluation', mode = $mode, classe = '$classe', discipline = '$discipline', libelle = '$numero' WHERE id = '$exid'";
+					$link->query( $sql );
+					if ( $exid !== $id ) {
+						updidchapitre( $exid, $id );
+					}
 				}
 			}
 			if ( !empty( $_POST[ 'numeronew' ] ) ) {
@@ -95,7 +97,7 @@ if ( estprof() ) {
 			$fichiercsv = $_FILES[ 'fichiercsv' ][ 'tmp_name' ];
 			$fic        = fopen( "$fichiercsv", 'rb' );
 			$first      = true;
-			for ( $ligne = fgetcsv( $fic, 1024, ";" ); !feof( $fic ); $ligne = fgetcsv( $fic, 1024, ";" ) ) {
+			while ( $ligne = fgetcsv( $fic, 1024, ";", '"') ) {			
 				$symbole = substr( $ligne[ 0 ], 0, 1 );
 				if ( $symbole !== "#" ) {
 					if ( $first ) {
@@ -194,7 +196,7 @@ if ( estprof() ) {
 			}
 			echo ">Notes</option>";
 			echo "</select></td>";
-			echo "<td><select name='trimestre[$i]'><option value=''>...</option>";
+			echo "<td><select name='trimestre[$i]'><option value=0>...</option>";
 			for ( $k = 1; $k <= 3; $k++ ) {
 				echo "<option value=$k";
 				if ( $k == $trimestre ) {
@@ -215,7 +217,7 @@ if ( estprof() ) {
 		echo "<td><select name='nbevaluationsnew'><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select></td>";
 		echo "<td><select name='autoevaluationnew'><option value=1>Oui</option><option value=0>Non</option></select></td>";
 		echo "<td><select name='modenew'><option value=0>Traditionnel</option><option value=1>Ceintures</option><option value=2>Notes</option></select></td>";
-		echo "<td><select name='trimestrenew'><option value=''>...</option><option value=1>1</option><option value=2>2</option><option value=3>3</option></select>";
+		echo "<td><select name='trimestrenew'><option value=0>...</option><option value=1>1</option><option value=2>2</option><option value=3>3</option></select>";
 		echo "<td><input type='date' class='inputcell' value='' name='datenew' placeholder='../../....' /></td>";
 		echo "</tr></tbody></table>";
 		echo "<p class='noprint'><input type='submit' value='Valider' name='subChap' /></p></form>";
@@ -224,7 +226,7 @@ if ( estprof() ) {
 		while ( $r = mysqli_fetch_array( $result ) ) {
 			$idch  = $r[ 'id' ];
 			$nomch = $r[ 'nom' ];
-			echo "<option value='$idch'>" . substr( $idch, strlen( $classe ) + strlen( $discipline ) ) . ") $nomch</option>";
+			echo "<option value='$idch'>" . substr( $idch, strlen( $classe ) + strlen( $discipline ) + 2 ) . ") $nomch</option>";
 		}
 		echo "</select> <input type='submit' value='Valider' name='subSupprChap' /></p></form>";
 		echo "<h2>Options</h2>";
@@ -243,58 +245,20 @@ if ( estprof() ) {
 			'',
 			'' 
 		);
-		$result   = $link->query( "SELECT * FROM " . $prefix . "notations WHERE classe = '$classe' AND discipline = '$discipline'" );
-		$r        = mysqli_fetch_array( $result );
-		$lstnotes = $r[ 'notations' ];
-		if ( !empty( $lstnotes ) ) {
-			$notes = explode( "|", $lstnotes );
-		} else {
-			$notes = array(
-				'',
-				'',
-				'',
-				'' 
-			);
-		}
-		$lstlibs = $r[ 'libelles' ];
-		if ( !empty( $lstlibs ) ) {
-			$libs = explode( "|", $lstlibs );
-		} else {
-			$libs = array(
-				'',
-				'',
-				'',
-				'' 
-			);
-		}
-		$lstdescs = $r[ 'descriptions' ];
-		if ( !empty( $lstdescs ) ) {
-			$descs = explode( "|", $lstdescs );
-		} else {
-			$descs = array(
-				'',
-				'',
-				'',
-				'' 
-			);
-		}
+		$codes   = array('NA', 'ECA', 'PA', 'A' );
+		$notes = donnenota( $classe, $discipline );
+		$libs = donnelib( $classe, $discipline, 0 );
+		$descs = donnedesc( $classe, $discipline );
 		$packact = $r[ 'icones' ];
-		$codes   = array(
-			'NA',
-			'ECA',
-			'PA',
-			'A' 
-		);
+		if($packact == ""){
+			$packact = "Origico";
+		}
 		for ( $i = 0; $i < 4; $i++ ) {
-			$nom  = $codes[ $i ];
-			$note = $notes[ $i ];
-			$lib  = $libs[ $i ];
-			$desc = $descs[ $i ];
 			echo "<tr>";
-			echo "<td style='width:40px;'>$nom</td>";
-			echo "<td><input type='text' class='inputcell' value=\"$lib\" name='libso[$i]' /></td>";
-			echo "<td><input style='width:100%;' type='text' class='inputcell' value=\"$desc\" name='descso[$i]' /></td>";
-			echo "<td><input type='text' class='inputcell' value='$note' name='noteso[$i]' /></td>";
+			echo "<td style='width:40px;'>".$codes[ $i ]."</td>";
+			echo "<td><input type='text' class='inputcell' value=\"".$libs[ $codes[$i] ]."\" name='libso[$i]' /></td>";
+			echo "<td><input style='width:100%;' type='text' class='inputcell' value=\"".$descs[ $codes[$i] ]."\" name='descso[$i]' /></td>";
+			echo "<td><input type='text' class='inputcell' value='".$notes[ $codes[$i] ]."' name='noteso[$i]' /></td>";
 			echo "</tr>";
 		}
 		echo "</tbody></table>";
@@ -309,16 +273,7 @@ if ( estprof() ) {
 				echo " checked";
 			}
 			echo "/> " . $nompico . "</td>";
-			$lstcodes = array(
-				"",
-				"NA",
-				"ECA",
-				"PA",
-				"A",
-				"ATT",
-				"OUI",
-				"NON" 
-			);
+			$lstcodes = array("", "NA", "ECA", "PA", "A", "ATT", "OUI", "NON");
 			foreach ( $lstcodes as $uncode ) {
 				if ( $uncode !== "" ) {
 					$icone = $dir . "images/Icones/$nompico/$uncode.png";
@@ -328,7 +283,7 @@ if ( estprof() ) {
 				if ( file_exists( $icone ) ) {
 					echo "<td><img alt='$uncode' src='$icone' /></td>";
 				} else {
-					echo "<td>" . donnelib( $uncode, $classe, $discipline, 0 ) . "</td>";
+					echo "<td>" . $libs[ $uncode ] . "</td>";
 				}
 			}
 			echo "</tr>";

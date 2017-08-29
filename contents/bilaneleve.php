@@ -173,8 +173,9 @@ if ( $eleve !== -1 ) {
 					}
 				}
 				$txt .= "'>";
+				$libs = donnelib( $classe, $discipline, $modech );
 				foreach ( $codes as $cd ) {
-					$txt .= "<option value='$cd'>" . donnelib( $cd, $classe, $discipline, $modech ) . "</option>";
+					$txt .= "<option value='$cd'>" . $libs[ $cd ] . "</option>";
 				}
 				$txt .= "</select>";
 			}
@@ -219,12 +220,13 @@ if ( $eleve !== -1 ) {
 						} else {
 							$codesform = $codes;
 						}
+						$libs = donnelib( $classe, $discipline, $modech );
 						foreach ( $codesform as $cd ) {
 							echo "<option value='$cd'";
 							if ( $comp[ $i ][ 'evals' ][ $j ] == $cd ) {
 								echo " selected";
 							}
-							echo ">" . donnelib( $cd, $classe, $discipline, $modech ) . "</option>";
+							echo ">" . $libs[ $cd ] . "</option>";
 						}
 						echo "</select></td>";
 					}

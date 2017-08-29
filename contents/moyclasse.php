@@ -19,7 +19,7 @@ if ( estprof() ) {
 	selectdiscipline( "\"moyclasse.php?idcl=$classe&idds=\" + this.value" );
 	echo "</p></div>";
 	if ( !empty( $classe ) && !empty( $discipline ) ) {
-		$result              = $link->query( "SELECT * FROM " . $prefix . "chapitres WHERE classe = '$classe' AND discipline = '$discipline' AND date <> '0000-00-00' AND trimestre <> 0 AND mode <> 1 ORDER BY id" );
+		$result              = $link->query( "SELECT * FROM " . $prefix . "chapitres WHERE classe = '$classe' AND discipline = '$discipline' AND date <> '0000-00-00' AND trimestre <> 0 AND mode <> 1 ORDER BY trimestre ASC, date ASC, id ASC" );
 		$chapitres           = array();
 		$numschapitres       = array();
 		$nomschapitres       = array();

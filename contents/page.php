@@ -5,6 +5,10 @@ switch ( $pg ) {
 		$inclpage = "accueil.php";
 		$nompage  = "Accueil";
 		break;
+	case "api":
+		$inclpage = "api.php";
+		$nompage  = "API";
+		break;
 	case "backup":
 		$inclpage = "backup.php";
 		$nompage  = "Backup";
