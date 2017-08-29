@@ -4,20 +4,21 @@
 
 QUE FAUT-IL POUR QUE ZEPHIRE FONCTIONNE ?
 -----------------------------------------
+
 Pour faire fonctionner Zéphire, il vous faut :
 
  * Un serveur Web (Apache, Cheerokee, lightHttpd, etc.)
- * PHP 7.0 avec ces différents modules :
- * Mysql
+ * PHP 5.4 (ou une version plus récente)
  * Un serveur de base de données MySQL
  
- Ou :
+Ou :
  
  * Utiliser la version disponible sur http://zephire.xyz/
 
 
-INSTALLATION
-------------
+INSTALLATION SUR VOTRE SERVEUR
+------------------------------
+
 Copier tous les fichiers sur votre serveur Web.
 
 Editer le fichier config.php avec vos informations personnelles.
