@@ -7,8 +7,8 @@ QUE FAUT-IL POUR QUE ZEPHIRE FONCTIONNE ?
 Pour faire fonctionner Zéphire, il vous faut :
 
  * Un serveur Web (Apache, Cheerokee, lightHttpd, etc.)
- * PHP 5.2 avec ces différents modules :
-   * Mysql
+ * PHP 7.0 avec ces différents modules :
+ * Mysql
  * Un serveur de base de données MySQL
  
  Ou :
