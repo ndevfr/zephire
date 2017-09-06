@@ -24,15 +24,16 @@ if ( estadmin() ) {
 	echo "<p>Cochez uniquement les cases $txtnbs :  <input type='checkbox' name='cks[]' value='1' /> <input type='checkbox' name='cks[]' value='2' /> <input type='checkbox' name='cks[]' value='3' /> <input type='checkbox' name='cks[]' value='4' /> <input type='checkbox' name='cks[]' value='5' /></p>";
 	echo "<p class='noprint'><input type='hidden' name='lnbs' value='$lnbs' /><input type='submit' value='Valider' name='submit' /></p></form>";
 	if ( ( !empty( $_POST[ 'submit' ] ) ) ) {
-		if ( encrypt( $_POST[ 'passwd' ] ) == $_SESSION[ 'acpassword' ] ) {
+		if ( md5( $_POST[ 'passwd' ] ) == $_SESSION[ 'acpassword' ] ) {
 			$txtckok = "";
 			foreach ( $_POST[ 'cks' ] as $ck ) {
 				$txtckok .= $ck;
 			}
 			if ( $txtckok == $_POST[ 'lnbs' ] ) {
 				$link->query( "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';" );
-				$raz = $link->query( "TRUNCATE TABLE `" . $prefix . "eleves`; TRUNCATE TABLE `" . $prefix . "evaluations`;" );
-				if ( $raz == true ) {
+				$raz1 = $link->query( 'TRUNCATE TABLE  `' . $prefix . 'eleves`;' );
+				$raz2 = $link->query( 'TRUNCATE TABLE  `' . $prefix . 'evaluations`;' );
+				if ( ($raz1&&$raz2) == true ) {
 					echo "<p>Suppression des &eacute;l&egrave;ves et &eacute;valuations ...... <span style='color:green;font-weight:bold;'>OK</span></p>";
 				} else {
 					echo "<p>Suppression des &eacute;l&egrave;ves et &eacute;valuations ...... <span style='color:red;font-weight:bold;'>Erreur !</span></p>";
